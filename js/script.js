@@ -24,16 +24,18 @@ const movieDB = {
     ]
 };
 const promoGenre = document.querySelector('.promo__genre');
-const promoBlocks = document.querySelector('.promo__adv');
+const promoBlocks = document.querySelectorAll('.promo__adv img');
 const promoItems = document.querySelector('.promo__interactive-list');
 promoGenre.textContent = 'Драма'
 
-document.querySelector('.promo__bg').style.backgroundImage = "url('../img/bg.jpg')";
+document.querySelector('.promo__bg').style.backgroundImage = "url('./img/bg.jpg')";
 
 
 const sortedFilms = movieDB.movies.sort();
 
-promoBlocks.innerHTML = "";
+promoBlocks.forEach((el) => {
+    el.remove()
+})
  
 promoItems.innerHTML = '';
 
