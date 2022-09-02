@@ -20,32 +20,78 @@ const movieDB = {
         "Лига справедливости",
         "Ла-ла лэнд",
         "Одержимость",
-        "Скотт Пилигрим против..."
+        "Скотт Пилигрим против...",
     ]
 };
 const promoGenre = document.querySelector('.promo__genre');
 const promoBlocks = document.querySelectorAll('.promo__adv img');
 const promoItems = document.querySelector('.promo__interactive-list');
+
+const btnConfirm = document.querySelector('.btn__confirm');
+const input = document.querySelector('.adding__input');
+const form = document.querySelector('form.add')
+const checkbox = document.querySelector('[type="checkbox"]');
+
+
+form.addEventListener('submit' , (event) => {
+    event.preventDefault();
+
+    let filmName = input.value;
+
+    if(filmName){
+        if(filmName.length > 21){
+            filmName = filmName.substr(0 , 21) + '...';
+        }
+        if(checkbox.checked){
+            console.log('Добавляем новый фильм!');
+        }
+        movieDB.movies.push(filmName);
+        sortArr(movieDB.movies)
+    
+        createMovieList(movieDB.movies , promoItems)
+    }
+    event.target.reset()
+})
+
 promoGenre.textContent = 'Драма'
 
 document.querySelector('.promo__bg').style.backgroundImage = "url('./img/bg.jpg')";
 
-
-const sortedFilms = movieDB.movies.sort();
-
-promoBlocks.forEach((el) => {
-    el.remove()
-})
- 
-promoItems.innerHTML = '';
-
-sortedFilms.forEach((el , index) => {
-    promoItems.innerHTML += addFilms(el , index)
-});
-function addFilms(el , index){
-    return `
-    <li class="promo__interactive-item">${index+1} ${el}
-    <div class="delete"></div>
-    </li>
-    `
+const deleteAdverb = (arr) => {
+   arr.forEach((el) => {
+        el.remove()
+    })
 }
+const sortArr = (arr) => {
+    arr.sort();
+}
+
+
+deleteAdverb(promoBlocks)
+
+
+function createMovieList(films , parent){
+     
+    parent.innerHTML = '';
+
+    sortArr(movieDB.movies);
+    films.forEach((el , index) => {
+        parent.innerHTML += `
+        <li class="promo__interactive-item">${index+1} ${el}
+        <div class="delete"></div>
+        </li>
+        `
+    });
+
+    document.querySelectorAll('.delete').forEach((btn , index) => {
+        btn.addEventListener('click' , () => {
+    
+            btn.parentElement.remove();
+            
+            movieDB.movies.splice(index , 1);
+    
+            createMovieList(films , parent);
+        })
+    })
+}
+createMovieList(movieDB.movies , promoItems)
