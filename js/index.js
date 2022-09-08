@@ -38,12 +38,12 @@ document.addEventListener('DOMContentLoaded' , () => {
     let deadline = '2022-09-11';
 
     function getTimeRemaining(endtime) {
+        
         const t = Date.parse(endtime) - Date.parse(new Date()),
         days = Math.floor(t / (1000 * 60 * 60 * 24)) , 
         hours = Math.floor((t / (1000 * 60 * 60 ) % 24)),
         minutes = Math.floor((t / 1000 / 60) % 60),
         seconds = Math.floor((t / 1000) % 60);
-
 
         return {
             'total': t,
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded' , () => {
 
         function updateClock() {
             const t = getTimeRemaining(endtime);
-
+ 
             days.innerHTML = getZero(t.days);
             hours.innerHTML = getZero(t.hours);
             minutes.innerHTML = getZero(t.minutes);
@@ -88,4 +88,51 @@ document.addEventListener('DOMContentLoaded' , () => {
     }
 
    setClock('.timer' , deadline);
+
+   // Modal 
+
+   const myModal = document.querySelector('.modal');
+   const modalClose = document.querySelector('[data-close]');
+
+   const modalTrigger = document.querySelectorAll('[data-modal]');
+
+   function openModal() {
+    myModal.classList.add('show');
+    myModal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+    clearInterval(modalTimerId);
+}
+
+    modalTrigger.forEach((item) => {
+        item.addEventListener('click', openModal);
+    })
+   
+    const closeModal = () => {
+        myModal.classList.add('hide');
+        myModal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click' , closeModal)
+
+    myModal.addEventListener('click', (e) => {
+       if(e.target === myModal){
+        closeModal();
+       }
+    })
+    document.addEventListener('keydown' , (e) => {
+      if(e.code === 'Escape' || myModal.classList.contains('show')){
+        closeModal();
+      }
+    });
+
+    const modalTimerId = setTimeout(openModal , 3000);
+
+    function showModalByScroll(){
+        if(window.scrollY + window.innerHeight + 200 > document.body.scrollHeight){
+            openModal()
+            window.removeEventListener('scroll' , showModalByScroll)
+        }
+    }
+    window.addEventListener('scroll' , showModalByScroll);
 });
