@@ -1,3 +1,41 @@
+class MenuCard {
+    constructor(src , alt , title , price , desc){
+      this.src = src;
+      this.alt = alt;
+      this.title = title;
+      this.price = price;
+      this.desc = desc;
+    }
+
+    renderCard(){
+         
+        let template = '';
+
+            let card = document.createElement('div');
+            card.className = 'menu__item';
+
+            this.src && (template += `<img src="${this.src}" alt="${this.alt}">`);
+
+            this.title && (template += `<h3 class="menu__item-subtitle">${this.title}"</h3>`);
+
+            this.desc && (template += `<div class="menu__item-descr">${this.desc}</div>`);
+
+            if(this.price){
+
+                template += `
+                <div class="menu__item-price">
+                `
+                template += `
+                <div class="menu__item-cost">Цена:</div>
+                <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                `
+                template += `</div>`
+            }
+            card.innerHTML = template; 
+            return card;   
+    }
+}
+
 document.addEventListener('DOMContentLoaded' , () => {
     const tabsContent = document.querySelectorAll('.tabcontent'),
           tabsItems = document.querySelectorAll('.tabheader__item'),
@@ -100,7 +138,7 @@ document.addEventListener('DOMContentLoaded' , () => {
     myModal.classList.add('show');
     myModal.classList.remove('hide');
     document.body.style.overflow = 'hidden';
-    clearInterval(modalTimerId);
+    // clearInterval(modalTimerId);
 }
 
     modalTrigger.forEach((item) => {
@@ -126,7 +164,7 @@ document.addEventListener('DOMContentLoaded' , () => {
       }
     });
 
-    const modalTimerId = setTimeout(openModal , 3000);
+    // const modalTimerId = setTimeout(openModal , 3000);
 
     function showModalByScroll(){
         if(window.scrollY + window.innerHeight + 200 > document.body.scrollHeight){
@@ -135,4 +173,15 @@ document.addEventListener('DOMContentLoaded' , () => {
         }
     }
     window.addEventListener('scroll' , showModalByScroll);
+
+    const container = document.querySelector('.menu__field .container');
+    container.innerHTML = '';
+    let newCard = new MenuCard(
+        'img/tabs/vegy.jpg',
+        'vegy',
+        'Products',
+        225,
+        'Custom Card');
+
+    container.append(newCard.renderCard());
 });
