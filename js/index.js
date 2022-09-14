@@ -1,10 +1,11 @@
 class MenuCard {
-    constructor(src , alt , title , price , desc){
+    constructor(src , alt , title , price , desc , ...classes){
       this.src = src;
       this.alt = alt;
       this.title = title;
       this.price = price;
       this.desc = desc;
+      this.classes = classes;
     }
 
     renderCard(){
@@ -12,7 +13,12 @@ class MenuCard {
         let template = '';
 
             let card = document.createElement('div');
-            card.className = 'menu__item';
+            if(this.classes.length === 0){
+              this.card = 'menu__item';
+              card.classList.add(this.card);
+            } else {
+                this.classes.forEach((className) => {card.classList.add(className)});
+            }
 
             this.src && (template += `<img src="${this.src}" alt="${this.alt}">`);
 
@@ -181,7 +187,8 @@ document.addEventListener('DOMContentLoaded' , () => {
         'vegy',
         'Products',
         225,
-        'Custom Card');
+        'Custom Card',
+        );
 
     container.append(newCard.renderCard());
 });
