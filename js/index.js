@@ -6,8 +6,12 @@ class MenuCard {
       this.price = price;
       this.desc = desc;
       this.classes = classes;
+      this.transfer = 27;
+      this.changetoUAH();
     }
-
+    changetoUAH(){
+        this.price = this.transfer * this.price;
+    }
     renderCard(){
          
         let template = '';
@@ -79,7 +83,7 @@ document.addEventListener('DOMContentLoaded' , () => {
     })
 
     // Timer
-    let deadline = '2022-09-11';
+    let deadline = '2022-09-25';
 
     function getTimeRemaining(endtime) {
         
@@ -137,7 +141,6 @@ document.addEventListener('DOMContentLoaded' , () => {
 
    const myModal = document.querySelector('.modal');
    const modalClose = document.querySelector('[data-close]');
-
    const modalTrigger = document.querySelectorAll('[data-modal]');
 
    function openModal() {
@@ -191,4 +194,43 @@ document.addEventListener('DOMContentLoaded' , () => {
         );
 
     container.append(newCard.renderCard());
+
+    const forms = document.querySelectorAll('form');
+    forms.forEach((item) => {
+        postData(item)
+    })
+
+     function postData(form){
+      form.addEventListener('submit' , (event) => {
+        const URL = 'server.php';
+
+        const message  = {
+         loading : 'Загрузка',
+         success : 'успех',
+         error : 'ошибка загрузки!'
+        }
+        event.preventDefault();
+        const statusMessage = document.createElement('div');
+        statusMessage.classList.add('status');
+        statusMessage.textContent = message.loading;
+        form.append(statusMessage);
+        const request = new XMLHttpRequest();
+
+        request.open('POST' , URL);
+        request.setRequestHeader('Content-type' , 'multipart/form-data');
+        
+        const formdata = new FormData(form);
+        request.send(formdata);
+
+        request.addEventListener('load' , () => {
+            if(request.status === 200){
+                console.log(request.response)
+                statusMessage.textContent = message.success;
+            } 
+            else{
+                statusMessage.textContent = message.error;
+            }
+        })
+      })
+     }
 });
