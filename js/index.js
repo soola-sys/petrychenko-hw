@@ -216,31 +216,32 @@ document.addEventListener("DOMContentLoaded", () => {
       statusMessage.src = message.loading;
       statusMessage.classList.add('spin');
       form.append(statusMessage);
-      const request = new XMLHttpRequest();
-
-      request.open("POST", URL);
-      request.setRequestHeader("Content-type", "application/json");
 
       const formdata = new FormData(form);
-
+      
+            
       const object = {};
       formdata.forEach((val , key) => {
         object[key] = val;
       })
-      const json = JSON.stringify(object);
 
-      request.send(json);
+      fetch(URL , {
+        method : 'POST', 
+        headers : {
+          'Content-type':'application/json',
+        },
+        body: JSON.stringify(object)
+      }).then(data => data.text())
+      .then(data => {
+        console.log(data);
+        showThanksModal(message.success);
+        statusMessage.remove();
+      }).catch(() => {
+        showThanksModal(message.error);
+      }).finally(() => {
+        form.reset();
+      })
 
-      request.addEventListener("load", () => {
-        if (request.status === 200) {
-          console.log(request.response);
-          showThanksModal(message.success);
-          form.reset();
-          statusMessage.remove();
-        } else {
-          showThanksModal(message.error);
-        }
-      });
     });
   }
 
@@ -267,4 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeModal()
     }, 3000)
   }
+
+
+  
 });
