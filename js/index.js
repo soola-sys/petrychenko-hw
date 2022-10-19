@@ -185,25 +185,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const container = document.querySelector(".menu__field .container");
   container.innerHTML = "";
-  let newCard = new MenuCard(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    "Products",
-    225,
-    "Custom Card"
-  );
 
-  container.append(newCard.renderCard());
+  const getRecource = async (url) => {
+    const res = await fetch(url)
+      if(!res.ok){
+        throw Error('Error happened!');
+      }
+      return await res.json();
+  }
+  getRecource('http://localhost:3000/menu')
+  .then(data => {
+    console.log(data);
+    data.map((obj) => {
+      container.append(new MenuCard(obj.img , obj.altImage , obj.title , obj.price , obj.descr).renderCard());
+    });
+  })
+  .catch(() => console.error);
+
+  // let newCard = new MenuCard(
+  //   "img/tabs/vegy.jpg",
+  //   "vegy",
+  //   "Products",
+  //   225,
+  //   "Custom Card"
+  // );
+
+  // container.append(newCard.renderCard());
 
   const forms = document.querySelectorAll("form");
   forms.forEach((item) => {
-    postData(item);
+    bindPostData(item);
   });
 
-  function postData(form) {
-    form.addEventListener("submit", (event) => {
+  const postData = async (url , data) => {
+  
+    const res = await fetch(url , {
+        method : 'POST', 
+        headers : {
+          'Content-type':'application/json',
+        },
+        body : data,
+    })
+    return await res.json();
+  }
 
-      const URL = "server.php";
+  function bindPostData(form) {
+    form.addEventListener("submit", (event) => {
 
       const message = {
         loading: 'icons/spinner.svg',
@@ -219,19 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const formdata = new FormData(form);
       
-            
-      const object = {};
-      formdata.forEach((val , key) => {
-        object[key] = val;
-      })
+      const json = JSON.stringify(Object.fromEntries(formdata.entries()))
 
-      fetch(URL , {
-        method : 'POST', 
-        headers : {
-          'Content-type':'application/json',
-        },
-        body: JSON.stringify(object)
-      }).then(data => data.text())
+      postData('http://localhost:3000/requests', json)
       .then(data => {
         console.log(data);
         showThanksModal(message.success);
@@ -241,10 +258,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }).finally(() => {
         form.reset();
       })
-
     });
   }
-
   function showThanksModal(message) {
     const prevModal = document.querySelector(".modal__dialog");
     prevModal.classList.add("hide");
@@ -269,6 +284,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000)
   }
 
-
-  
 });
